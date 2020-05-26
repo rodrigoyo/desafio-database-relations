@@ -36,7 +36,7 @@ class Product {
 
   @Expose({ name: 'price' })
   getPrice(): string {
-    return this.price.toFixed(2);
+    return parseFloat(`${this.price}`).toFixed(2);
   }
 }
 
