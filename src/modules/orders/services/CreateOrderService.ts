@@ -46,10 +46,22 @@ class CreateOrderService {
       productsIds,
     );
 
-    const productsToOrder = productsFinded.map(e => {
-      const quantity = Number(products.find(i => i.id === e.id)?.quantity);
-      // const price = quantity * e.price;
-      return { product_id: e.id, price: Number(e.price), quantity };
+    if (products.length !== productsFinded.length) {
+      throw new AppError('There are invalid products in the order.');
+    }
+
+    const productsToOrder = productsFinded.map(product => {
+      const quantity = Number(
+        products.find(i => i.id === product.id)?.quantity,
+      );
+      if (product.quantity - quantity < 0) {
+        throw new AppError('Insuficient stock');
+      }
+      return {
+        product_id: product.id,
+        price: Number(product.price),
+        quantity,
+      };
     });
 
     const order = await this.ordersRepository.create({
