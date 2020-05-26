@@ -69,7 +69,7 @@ class ProductsRepository implements IProductsRepository {
       const productToUpdate = products.find(e => e.id === product.id);
       if (productToUpdate) {
         const productFinded = product;
-        productFinded.quantity = productToUpdate.quantity;
+        productFinded.quantity = product.quantity - productToUpdate.quantity;
         await this.ormRepository.save(productFinded);
         productsUpdated.push(productFinded);
       }

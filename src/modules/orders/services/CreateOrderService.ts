@@ -50,6 +50,7 @@ class CreateOrderService {
       throw new AppError('There are invalid products in the order.');
     }
 
+    const productsToUpdateQuantity: IProduct[] = [];
     const productsToOrder = productsFinded.map(product => {
       const quantity = Number(
         products.find(i => i.id === product.id)?.quantity,
@@ -57,12 +58,17 @@ class CreateOrderService {
       if (product.quantity - quantity < 0) {
         throw new AppError('Insuficient stock');
       }
+
+      productsToUpdateQuantity.push({ id: product.id, quantity });
+
       return {
         product_id: product.id,
         price: Number(product.price),
         quantity,
       };
     });
+
+    await this.productsRepository.updateQuantity(productsToUpdateQuantity);
 
     const order = await this.ordersRepository.create({
       customer,
